@@ -4,32 +4,9 @@ function getFromBasket() {
     return (basket != null)? JSON.parse(basket):[];
 }
 
-// fonction afficher les elements du html
-// function displayOneProduct () {
-//     return `<article class="cart__item" data-id="${this._id}" data-color="${this.color}">
-//                 <div class="cart__item__img">
-//                 <img src="${this.imageUrl}" alt="${this.altTxt}.">
-//                 </div>
-//                 <div class="cart__item__content">
-//                 <div class="cart__item__content__description">
-//                     <h2>${this.name}</h2>
-//                     <p>${this.color}</p>
-//                     <p>${this.price}</p>
-//                 </div>
-//                 <div class="cart__item__content__settings">
-//                     <div class="cart__item__content__settings__quantity">
-//                     <p>Qté : </p>
-//                     <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${this.quantity}">
-//                     </div>
-//                     <div class="cart__item__content__settings__delete">
-//                     <p class="deleteItem">Supprimer</p>
-//                     </div>
-//                 </div>
-//                 </div>
-//             </article>`
-// }
+let basket = getFromBasket();
 
-function displayOneProduct (itemId, itemColor, articleImage, itemAlt, itemName, itemPrice, itemQuantity) {
+function displayOneProduct (itemId, itemColor, itemImage, itemAlt, itemName, itemPrice, itemQuantity) {
     let articleLink = document.createElement("a");
     articleLink.className = "cart__item";
     articleLink.setAttribute("data-id", itemId);
@@ -43,7 +20,7 @@ function displayOneProduct (itemId, itemColor, articleImage, itemAlt, itemName, 
 
     // Création de la balise img dans la div
     let articleImage = document.createElement("img");
-    articleImage.src = articleImage;
+    articleImage.src = itemImage;
     articleImage.alt = itemAlt;
     divImage.appendChild(articleImage);
 
@@ -84,44 +61,100 @@ function displayOneProduct (itemId, itemColor, articleImage, itemAlt, itemName, 
 
     // création de la balise p pour la quantité
     let articleQuantity = document.createElement("p");
-    articleQuantity.textContent = `Quantity : ${itemQuantity}`;
+    articleQuantity.textContent = `Qté :`;
     divQuantity.appendChild(articleQuantity);
 
     // création de la balise input 
-    let articleInput = document.createElement("input");
-    articleInput.className = "itemQuantity";
-    articleInput.type = "number";
-    articleInput.name = "itemQuantity";
-    articleInput.min = 1;
-    articleInput.max = 100;
-    articleInput.value = 42;
-    divQuantity.appendChild(articleInput);
-
+    let inputQuantity = document.createElement("input");
+    inputQuantity.className = "itemQuantity";
+    inputQuantity.type = "number";
+    inputQuantity.name = "itemQuantity";
+    inputQuantity.min = "1";
+    inputQuantity.max = "100";
+    inputQuantity.value = itemQuantity;
+    inputQuantity.addEventListener('change', () => {
+        if (inputQuantity.value < 1 || inputQuantity.value > 100){
+            alert("La quantité doit être comprise entre 1 et 100");
+        }
+        else{
+            let sameProduct = basket.find(p => (p.id == itemId && p.color == itemColor));
+            sameProduct.quantity = parseInt(inputQuantity.value);
+            localStorage.setItem("basket",JSON.stringify(basket));
+            totalArticleQuantity();
+            let basketTotalPrice = document.getElementById('totalPrice');
+            newTotalPrice = basketTotalPrice.textContent - (itemQuantity * itemPrice) + (inputQuantity.value * itemPrice);
+            itemQuantity = inputQuantity.value;
+            basketTotalPrice.innerHTML(newTotalPrice);
+        }
+    });
+    divQuantity.appendChild(inputQuantity);
     
     // Création de la div supprimer
     let divDelete = document.createElement("div");
     divDelete.className = "cart__item__content__settings__delete";
     divContent.appendChild(divDelete);
 
+    let articleDelete = document.createElement("p");
+    articleDelete.className = "deleteItem";
+    articleDelete.textContent = "Supprimer";
+    articleDelete.addEventListener('click', ()=>{
+        basket = basket.filter(p => (p.id != itemId || p.color != itemColor));
+        localStorage.setItem("basket",JSON.stringify(basket));
+        refreshBasket();
+    })
+    divDelete.appendChild(articleDelete);
+
 }
 
 
-// function display () {
-//     fetch(`http://localhost:3000/api/products/${id}`)
-//         .then(response => response.json()) // on le met sous format json
-//         .then(product => {
-//             let cartItem 
-//         }
-// }
+function totalArticleQuantity (){
+    let totalQuantity = 0;
+    for(let product of basket){
+        totalQuantity += parseInt(product.quantity);
+    }
+    document.getElementById("totalQuantity").innerHTML = totalQuantity;
+}
 
-// function displayAllProducts(){
-//     let item = document.querySelector("#cart__items");
-//     let products = this.getFromBasket();
+// fonction qui permet de rafraichir le panier quand on quitte la page
+function refreshBasket(){
+    let clearSection = document.getElementById('cart__items');
+    if(window.confirm("Voulez vous supprimer ?")){
+        alert("Vous avez bien supprimé l'article ! ")
+        clearSection.innerHTML = "";
+        displayPage();
+    }
+    else{
+        alert("Vous n'avez pas supprimé !")
+    }
+}
 
-//     for (let prod of products){
-//         prod = Object.assign(this, prod);
-//         item.insertAdjacentHTML("beforeend", prod.displayOneProduct);
-//     }
-// }
+function displayPage() {
+    fetch(`http://localhost:3000/api/products`)
+    .then(response => response.json()) // on le met sous format json
+    .then(products => {
+        let totalPrice = 0;
+        for(let productOfBasket of basket){
+            for(let product of products){
+                if(productOfBasket.id == product._id){
+                    displayOneProduct (
+                    productOfBasket.id, 
+                    productOfBasket.color,
+                    product.imageUrl,
+                    product.altTxt,
+                    product.name,
+                    product.price,
+                    productOfBasket.quantity
+                    );
+                    totalPrice += product.price * productOfBasket.quantity;
+                }
+            }
+        }
+        totalArticleQuantity();
+        let basketTotalPrice = document.getElementById('totalPrice');
+        basketTotalPrice.innerHTML = totalPrice;
+    }).catch((error) => {
+        console.log(`Erreur : ${error}`)
+    })
+}
 
-displayAllProducts();
+displayPage();
