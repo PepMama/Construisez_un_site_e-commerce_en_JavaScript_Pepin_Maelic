@@ -78,7 +78,7 @@ function addProductInBasket() {
         }
         else{
             let basket = getFromBasket();
-            let sameProduct = basket.find(p => (p.id = id && p.color == colorSelected));
+            let sameProduct = basket.find(p => (p.id == id && p.color == colorSelected));
             if (sameProduct != undefined){
                 sameProduct.quantity = parseInt(sameProduct.quantity) + parseInt(quantitySelected);
             }

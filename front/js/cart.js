@@ -106,9 +106,12 @@ function displayOneProduct (itemId, itemColor, itemImage, itemAlt, itemName, ite
     articleDelete.className = "deleteItem";
     articleDelete.textContent = "Supprimer";
     articleDelete.addEventListener('click', ()=>{
-        basket = basket.filter(p => (p.id != itemId || p.color != itemColor));
-        localStorage.setItem("basket",JSON.stringify(basket));
-        refreshBasket();
+        if (window.confirm("Voulez vous supprimer le produit selectionné ?")){
+            basket = basket.filter(p => (p.id != itemId || p.color != itemColor));
+            localStorage.setItem("basket",JSON.stringify(basket));
+            // refreshBasket();
+            location.reload();
+        }
     })
     divDelete.appendChild(articleDelete);
 
@@ -124,18 +127,12 @@ function totalArticleQuantity (){
 }
 
 // fonction qui permet de rafraichir le panier quand on quitte la page
-function refreshBasket(){
-    let clearSection = document.getElementById("cart__items");
-    alert("Vous avez bien supprimé l'article ! ")
-    clearSection.innerHTML = "";
-    displayPage();
-    // if(window.confirm("Voulez vous supprimer ?")){
-
-    // }
-    // else{
-    //     alert("Vous n'avez pas supprimé !")
-    // }
-}
+// function refreshBasket(){
+//     let clearSection = document.getElementById("cart__items");
+//     alert("Vous avez bien supprimé l'article ! ")
+//     clearSection.innerHTML = "";
+//     displayPage();
+// }
 
 function displayPage() {
     fetch("http://localhost:3000/api/products")
@@ -302,7 +299,7 @@ function order () {
                 localStorage.setItem("contact", JSON.stringify(contact));// initialiser le panier
                 if(basket && basket.length){
                     for( let basketItem of basket ){
-                        products.push(basketItem); 
+                        products.push(basketItem.id); 
                     };
                     let order = {
                         contact: contact,
