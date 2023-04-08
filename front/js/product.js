@@ -4,10 +4,7 @@ const urlSearchParams = new URLSearchParams(str);
 const id= urlSearchParams.get("id");
 const url = "http://localhost:3000/api/products";
 
-/**
- * If the id exists, fetch the product from the API, then convert the response to JSON, then display
- * the product's image, title, price, description, and colors.
- */
+// Permet de récupérer les informations de l'article
 function getProduct () {
     if(id){
         fetch(`http://localhost:3000/api/products/${id}`)
@@ -51,10 +48,9 @@ function saveInBasket (basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
 }
 
-// Création d'une fonction pour la récupération des données
+// Création d'une fonction pour la récupération des données depuis le panier
 function getFromBasket() {
     let basket = localStorage.getItem("basket");
-
     return (basket != null)? JSON.parse(basket):[];
 }
 
@@ -99,6 +95,7 @@ function addProductInBasket() {
 
 const btnAddInBasket = document.getElementById("addToCart");
 
+// ajouter un événement de clique au bouton qui permet d'ajouter un article dans le panier
 btnAddInBasket.addEventListener('click', () => {
     addProductInBasket();
 })

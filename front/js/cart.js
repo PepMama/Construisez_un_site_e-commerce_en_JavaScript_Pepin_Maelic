@@ -1,6 +1,10 @@
 // const { json } = require("body-parser");
 
 // Création d'une fonction pour la récupération des données du local storage
+/**
+ * If the basket is not empty, return the basket, otherwise return an empty array.
+ * @returns the basket.
+ */
 function getFromBasket() {
     let basket = localStorage.getItem("basket");
     // return (basket != null)? JSON.parse(basket):[];
@@ -13,7 +17,6 @@ function getFromBasket() {
 }
 
 let basket = getFromBasket();
-
 function displayOneProduct (itemId, itemColor, itemImage, itemAlt, itemName, itemPrice, itemQuantity) {
     let articleLink = document.createElement("a");
     articleLink.className = "cart__item";
@@ -118,6 +121,10 @@ function displayOneProduct (itemId, itemColor, itemImage, itemAlt, itemName, ite
 }
 
 
+/**
+ * It loops through the basket array, adds the quantity of each product to the totalQuantity variable,
+ * and then displays the totalQuantity variable in the HTML.
+ */
 function totalArticleQuantity (){
     let totalQuantity = 0;
     for(let product of basket){
@@ -126,14 +133,7 @@ function totalArticleQuantity (){
     document.getElementById("totalQuantity").innerHTML = totalQuantity;
 }
 
-// fonction qui permet de rafraichir le panier quand on quitte la page
-// function refreshBasket(){
-//     let clearSection = document.getElementById("cart__items");
-//     alert("Vous avez bien supprimé l'article ! ")
-//     clearSection.innerHTML = "";
-//     displayPage();
-// }
-
+/* permet d'afficher la page web avec les produits */
 function displayPage() {
     fetch("http://localhost:3000/api/products")
     .then(response => response.json())
@@ -186,6 +186,12 @@ firstName.addEventListener('input', function(i) {
     validFirstName(i.target.value);
     contact.firstName = i.target.value;
 });
+/**
+ * If the first name is valid, then the error message is cleared and the function returns true. If the
+ * first name is not valid, then the error message is set and the function returns false.
+ * @param firstName - the value of the first name input field.
+ * @returns a boolean value.
+ */
 function validFirstName(firstName) {  
     let valid = false;
     let testName = letterRegExp.test(firstName);

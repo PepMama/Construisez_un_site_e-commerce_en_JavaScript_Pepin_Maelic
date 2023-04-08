@@ -1,17 +1,19 @@
 const url = "http://localhost:3000/api/products";
-
-// async : les fonctions se lancent en même temps
 async function getProducts (){
-    const response = await fetch(url); // on récupère les données // await: on attend que l'url soit chargé
-    let data = await response.json(); // on les transforme en json
+    const response = await fetch(url);
+    let data = await response.json();
 
     return data;
 }
 
+/**
+ * This function displays a list of products on a webpage by fetching product data and generating HTML
+ * code for each product.
+ */
 async function displayProducts (){
     const listProducts = await getProducts(); 
     let html = '';
-    listProducts.forEach(product => { // on parcourt la liste de tous les produits (afficher chaque produit)
+    listProducts.forEach(product => {
         let htmlSegment = 
         `
         <a href="./product.html?id=${product._id}">
@@ -24,7 +26,6 @@ async function displayProducts (){
         `;
         html += htmlSegment;
     });
-    // récupérer l'id du html et l'ajouter dans une variable
     const listItems = document.querySelector("#items");
     listItems.innerHTML = html;
 } 
