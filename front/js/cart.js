@@ -1,5 +1,3 @@
-// const { json } = require("body-parser");
-
 // Création d'une fonction pour la récupération des données du local storage
 /**
  * If the basket is not empty, return the basket, otherwise return an empty array.
@@ -68,7 +66,7 @@ function displayOneProduct (itemId, itemColor, itemImage, itemAlt, itemName, ite
     // Création de la div content quantity
     let divQuantity = document.createElement("div");
     divQuantity.className = "cart__item__content__settings__quantity";
-    divContent.appendChild(divQuantity);
+    divSetting.appendChild(divQuantity);
 
     // création de la balise p pour la quantité
     let articleQuantity = document.createElement("p");

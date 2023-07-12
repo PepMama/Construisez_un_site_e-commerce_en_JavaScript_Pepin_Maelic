@@ -45,7 +45,7 @@ getProduct();
 
 // fonction qui permet de sauvegarder dans le panier
 function saveInBasket (basket) { 
-    localStorage.setItem("basket", JSON.stringify(basket));
+    localStorage.setItem("basket", JSON.stringify(basket)); // permet de stocker une chaine de caractere
 }
 
 // Création d'une fonction pour la récupération des données depuis le panier
